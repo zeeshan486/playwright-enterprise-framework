@@ -18,6 +18,10 @@ export const users = {
     performanceGlitchUser: {
         username: "performance_glitch_user",
         password: "secret_sauce"
+    },
+    invaidUser : {
+        username : "invaliduser",
+        password : "invalid_password"
     }
 
 };
