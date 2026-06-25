@@ -6,8 +6,8 @@ export class InventoryPage extends BasePage{
     readonly productsTitle : Locator;
     readonly cartCount : Locator;
 
-    private getProductId(productName:string):string{
-        return productName.replaceAll(" ","-").toLowerCase();
+    private getProductId(productNames:string):string{
+        return productNames.replaceAll(" ","-").toLowerCase();
     }
 
 
@@ -19,9 +19,10 @@ export class InventoryPage extends BasePage{
         
     }
 
-    async addProductToCart(productName:string):Promise<void>{
+    async addProductsToCart(productNames:string[]):Promise<void>{
 
-        const productId =  this.getProductId(productName);
+        for(const productName of productNames){
+        const productId =  this.getProductId(productName);  
         const addToCartButton  = this.page.getByTestId(`add-to-cart-${productId}`)
         
 
@@ -29,14 +30,17 @@ export class InventoryPage extends BasePage{
             throw new Error(`Product '${productName}' not found`)
         }
 
-        await addToCartButton .click();
+        await addToCartButton .click();  
+        }
+        
+        
 
 
     }
 
     async getCartBadgeCount(): Promise<number>{
-        const cartCaount = Number((await this.cartCount.textContent())?.trim()??0);
-        return cartCaount;
+        const cartCount = Number((await this.cartCount.textContent())?.trim()??0);
+        return cartCount;
 
     }
 

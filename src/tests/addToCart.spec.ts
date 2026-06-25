@@ -1,0 +1,22 @@
+import {test,expect} from "../fixtures/pageFixture"
+import { products } from "../test-data/product";
+import { users } from "../test-data/users";
+
+
+test.beforeEach("Login with valid user",async({loginPage,inventoryPage})=>{
+    await loginPage.navigate("/");
+    await loginPage.login(users.standardUser.username,users.standardUser.password)
+    await expect(inventoryPage.productsTitle).toHaveText("Products")
+
+})
+
+test("TC-05 Add Single Product",async({inventoryPage})=>{
+
+    await inventoryPage.addProductsToCart([products.backpack.name])
+    expect(await inventoryPage.getCartBadgeCount()).toBe(1)
+
+
+
+
+ 
+})
