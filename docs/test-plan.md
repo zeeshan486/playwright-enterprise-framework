@@ -12,14 +12,15 @@ TC-04 Verify Products Page
 TC-05 Add Single Product
 TC-06 Add Multiple Products
 TC-07 Remove Product
+TC-08  Remove One Product From Multiple Products
 
 ## Cart Module
 
-TC-08 Verify Product In Cart
-TC-09 Remove Product From Cart
+TC-09 Verify Product In Cart
+TC-10 Remove Product From Cart
 
 ## Checkout Module
 
-TC-10 Successful Checkout
-TC-11 Missing First Name
-TC-12 Missing Postal Code
+TC-11 Successful Checkout
+TC-12 Missing First Name
+TC-13 Missing Postal Code

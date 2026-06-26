@@ -20,3 +20,9 @@ test("TC-05 Add Single Product",async({inventoryPage})=>{
 
  
 })
+test("TC-06 Add Multiple Products",async({inventoryPage})=>{
+
+    await inventoryPage.addProductsToCart([products.backpack.name,products.bikeLight.name])
+    expect(await inventoryPage.getCartBadgeCount()).toBe(2)
+
+})

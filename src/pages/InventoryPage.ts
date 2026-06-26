@@ -6,6 +6,7 @@ export class InventoryPage extends BasePage{
     readonly productsTitle : Locator;
     readonly cartCount : Locator;
 
+
     private getProductId(productNames:string):string{
         return productNames.replaceAll(" ","-").toLowerCase();
     }
@@ -16,6 +17,7 @@ export class InventoryPage extends BasePage{
         super(page)
         this.productsTitle =  page.getByTestId('title')
         this.cartCount = page.getByTestId("shopping-cart-badge")
+
         
     }
 
@@ -33,12 +35,28 @@ export class InventoryPage extends BasePage{
         await addToCartButton .click();  
         }
         
-        
+    
+    }
 
+    async removeProductsFromCart(productNames:string[]):Promise<void>{
+
+        for(const productName of productNames){
+            const productId = this.getProductId(productName)
+            const removeFromCartButton =  this.page.getByTestId(`remove-${productId}`)
+
+            if(!(removeFromCartButton.isVisible())){
+                throw new Error(`Remove Button not for ${productName}`)
+            }
+            await removeFromCartButton.click();
+
+        }
 
     }
 
     async getCartBadgeCount(): Promise<number>{
+        if(!(await this.cartCount.isVisible())){
+            return 0
+        }
         const cartCount = Number((await this.cartCount.textContent())?.trim()??0);
         return cartCount;
 
