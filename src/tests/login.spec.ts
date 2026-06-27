@@ -23,7 +23,7 @@ test("TC-02 Locked User Login",async({loginPage})=>{
 test("TC-03 Invalid Login",async({loginPage})=>{
 
     await loginPage.navigate("/");
-    await loginPage.login(users.invaidUser.username,users.invaidUser.password)
+    await loginPage.login(users.invalidUser.username,users.invalidUser.password)
     const errorMessage = await loginPage.getErrorMessage()
     expect(errorMessage).toBe("Epic sadface: Username and password do not match any user in this service")
 

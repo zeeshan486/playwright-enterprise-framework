@@ -8,23 +8,13 @@ test.beforeEach("Login with valid user",async({loginPage,inventoryPage})=>{
     await expect(inventoryPage.productsTitle).toHaveText("Products")
 
 })
-
-
-
-test("TC-07 Remove Product",async({inventoryPage})=>{
+test("TC-10 Remove Product From Cart",async({inventoryPage,cartPage})=>{
 
     await inventoryPage.addProductsToCart([products.backpack.name])
-    await inventoryPage.removeProductsFromCart([products.backpack.name])
+    await inventoryPage.openCart()
+    await cartPage.removeProductsFromCart([products.backpack.name])
     expect(await inventoryPage.getCartBadgeCount()).toBe(0)
 
 
-
-})
-
-test("TC-08  Remove One Product From Multiple Products",async({inventoryPage})=>{
-
-    await inventoryPage.addProductsToCart([products.backpack.name,products.bikeLight.name])
-    await inventoryPage.removeProductsFromCart([products.backpack.name])
-    expect(await inventoryPage.getCartBadgeCount()).toBe(1)
 
 })

@@ -4,8 +4,8 @@ import {BasePage} from "./BasePage"
 export class InventoryPage extends BasePage{
 
     readonly productsTitle : Locator;
-    readonly cartCount : Locator;
-
+    private readonly cartCount : Locator;
+    private readonly cartIcon : Locator;
 
     private getProductId(productNames:string):string{
         return productNames.replaceAll(" ","-").toLowerCase();
@@ -17,6 +17,7 @@ export class InventoryPage extends BasePage{
         super(page)
         this.productsTitle =  page.getByTestId('title')
         this.cartCount = page.getByTestId("shopping-cart-badge")
+        this.cartIcon =  page.getByTestId("shopping-cart-link")
 
         
     }
@@ -44,7 +45,7 @@ export class InventoryPage extends BasePage{
             const productId = this.getProductId(productName)
             const removeFromCartButton =  this.page.getByTestId(`remove-${productId}`)
 
-            if(!(removeFromCartButton.isVisible())){
+            if(!(await removeFromCartButton.isVisible())){
                 throw new Error(`Remove Button not for ${productName}`)
             }
             await removeFromCartButton.click();
@@ -60,6 +61,10 @@ export class InventoryPage extends BasePage{
         const cartCount = Number((await this.cartCount.textContent())?.trim()??0);
         return cartCount;
 
+    }
+
+    async openCart():Promise<void>{
+         await this.cartIcon.click();
     }
 
 

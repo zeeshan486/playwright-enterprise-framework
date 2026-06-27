@@ -19,7 +19,7 @@ export const users = {
         username: "performance_glitch_user",
         password: "secret_sauce"
     },
-    invaidUser : {
+    invalidUser : {
         username : "invaliduser",
         password : "invalid_password"
     }
