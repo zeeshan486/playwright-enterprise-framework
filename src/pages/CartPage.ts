@@ -4,6 +4,7 @@ import { BasePage} from "./BasePage";
 export class CartPage extends BasePage{
 
     private readonly productNames : Locator;
+    private readonly checkout:Locator;
 
 
     private getProductId(productName:string):string{
@@ -13,6 +14,7 @@ export class CartPage extends BasePage{
     constructor(page:Page){
         super(page)
         this.productNames = page.getByTestId("inventory-item-name");
+        this.checkout = page.getByTestId("checkout")
     }
 
     async getProductNames():Promise<string[]>{
@@ -32,12 +34,11 @@ export class CartPage extends BasePage{
 
 
         }
-
-
-
-
-
     }
+    async clickOnCheckout():Promise<void>{
+        await this.checkout.click();
+
+    }    
 
 
 

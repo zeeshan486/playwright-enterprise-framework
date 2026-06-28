@@ -16,9 +16,6 @@ test("TC-07 Remove Product",async({inventoryPage})=>{
     await inventoryPage.addProductsToCart([products.backpack.name])
     await inventoryPage.removeProductsFromCart([products.backpack.name])
     expect(await inventoryPage.getCartBadgeCount()).toBe(0)
-
-
-
 })
 
 test("TC-08  Remove One Product From Multiple Products",async({inventoryPage})=>{
