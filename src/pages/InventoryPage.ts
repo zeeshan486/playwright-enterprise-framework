@@ -3,7 +3,7 @@ import {BasePage} from "./BasePage"
 
 export class InventoryPage extends BasePage{
 
-    private readonly productsTitle : Locator;
+    readonly productsTitle : Locator;
     private readonly cartCount : Locator;
     private readonly cartIcon : Locator;
 private readonly menuButton: Locator;

@@ -5,7 +5,7 @@ import { products } from "../test-data/product"
 test.beforeEach("Login with valid user",async({loginPage,inventoryPage})=>{
     await loginPage.navigate("/");
     await loginPage.login(users.standardUser.username,users.standardUser.password)
-    await expect(inventoryPage.productsTitle).toHaveText("Products")
+    expect(await inventoryPage.getProductsTitle()).toBe("Products")
 
 })
 
