@@ -24,3 +24,19 @@ TC-10 Remove Product From Cart
 TC-11 Successful Checkout
 TC-12 Missing First Name
 TC-13 Missing Postal Code
+
+## Module 6 – Authentication & Session Management
+
+TC-01 Login with valid credentials
+
+TC-02 Login with invalid credentials
+
+TC-03 Logout
+
+TC-04 Save authenticated state
+
+TC-05 Reuse storageState to skip login
+
+TC-06 Verify protected route without login
+
+TC-07 Verify protected route with saved session

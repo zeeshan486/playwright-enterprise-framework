@@ -20,9 +20,9 @@ export const test = base.extend<MyFixture>({
         const inventoryPage = new InventoryPage(page)
         await use(inventoryPage)
     },
-    cartPage : async({page},user)=>{
+    cartPage : async({page},use)=>{
         const cartPage = new CartPage(page)
-        await user(cartPage)
+        await use(cartPage)
     },
     checkoutPage:async({page},use)=>{
         const checkoutPage = new CheckoutPage(page)

@@ -3,13 +3,12 @@ import {BasePage} from "./BasePage"
 
 export class InventoryPage extends BasePage{
 
-    readonly productsTitle : Locator;
+    private readonly productsTitle : Locator;
     private readonly cartCount : Locator;
     private readonly cartIcon : Locator;
+private readonly menuButton: Locator;
+private readonly logoutLink: Locator;
 
-    private getProductId(productNames:string):string{
-        return productNames.replaceAll(" ","-").toLowerCase();
-    }
 
 
 
@@ -18,8 +17,16 @@ export class InventoryPage extends BasePage{
         this.productsTitle =  page.getByTestId('title')
         this.cartCount = page.getByTestId("shopping-cart-badge")
         this.cartIcon =  page.getByTestId("shopping-cart-link")
+        this.menuButton = page.getByRole("button", { name: "Open Menu" });
+this.logoutLink = page.getByRole("link", { name: "Logout" });
 
         
+    }
+    private getProductId(productNames:string):string{
+        return productNames.replaceAll(" ","-").toLowerCase();
+    }
+    async getProductsTitle(): Promise<string>{
+        return (await this.productsTitle.innerText()).trim() ?? ""
     }
 
     async addProductsToCart(productNames:string[]):Promise<void>{
@@ -67,6 +74,13 @@ export class InventoryPage extends BasePage{
          await this.cartIcon.click();
     }
 
+async logout(): Promise<void> {
+
+    await this.menuButton.click();
+
+    await this.logoutLink.click();
+
+}
 
 
 

@@ -37,7 +37,7 @@ export class CheckoutPage extends BasePage{
         if(!(await this.errorMessage.isVisible())){
             return ""
         }
-        return (((await this.errorMessage.textContent())?.trim()) ?? "")
+        return (((await this.errorMessage.innerText())?.trim()) ?? "")
     }
 
     async getSuccessMessage():Promise<string>{

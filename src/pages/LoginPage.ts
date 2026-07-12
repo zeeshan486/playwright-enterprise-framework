@@ -31,7 +31,11 @@ export class LoginPage extends BasePage{
         return ((await this.errorMessage.textContent())?.trim()??"")
     }
 
+async accessProtectedInventory(): Promise<void> {
 
+    await this.page.goto("/inventory.html");
+
+}
 
 
 }
