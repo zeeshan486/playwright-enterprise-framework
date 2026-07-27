@@ -3,14 +3,24 @@
   "version": "1.0.0",
   "license": "ISC",
   "scripts": {
-    "test": "playwright test",
+    "test": "cross-env ENV=qa playwright test --project=chromium",
+    "test:all": "playwright test",
+    "test:chromium": "playwright test --project=chromium",
+    "test:firefox": "playwright test --project=firefox",
+    "test:webkit": "playwright test --project=webkit",
+    "test:qa": "cross-env ENV=qa playwright test --project=chromium",
+    "test:stage": "cross-env ENV=stage playwright test --project=chromium",
+    "test:prod": "cross-env ENV=prod playwright test --project=chromium",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "report": "playwright show-report"
+    "typecheck": "tsc --noEmit",
+    "report": "playwright show-report artifacts/reports"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",
     "@types/node": "^26.0.0",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.3.1",
     "typescript": "^6.0.3"
   }
 }

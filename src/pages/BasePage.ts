@@ -1,19 +1,9 @@
-import {Page,Locator} from "@playwright/test"
+import { Page } from "@playwright/test";
+
 export class BasePage {
+    constructor(protected readonly page: Page) {}
 
-    constructor(protected page: Page) {}
-
-    async navigate(url: string): Promise<void> {
-        await this.page.goto(url);
-    }
-
-    async getPageTitle(): Promise<string> {
-        return await this.page.title();
-    }
-
-    async takeScreenshot(name: string): Promise<void> {
-        await this.page.screenshot({
-            path: `screenshots/${name}.png`
-        });
+    async navigate(path: string): Promise<void> {
+        await this.page.goto(path);
     }
 }

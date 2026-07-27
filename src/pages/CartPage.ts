@@ -1,45 +1,28 @@
 import { Locator, Page } from "@playwright/test";
-import { BasePage} from "./BasePage";
+import { BasePage } from "./BasePage";
 
-export class CartPage extends BasePage{
+export class CartPage extends BasePage {
+    readonly productNames: Locator;
+    readonly checkoutButton: Locator;
 
-    private readonly productNames : Locator;
-    private readonly checkout:Locator;
-
-
-    private getProductId(productName:string):string{
-        return productName.replaceAll(" ","-").toLowerCase();
-    }
-
-    constructor(page:Page){
-        super(page)
+    constructor(page: Page) {
+        super(page);
         this.productNames = page.getByTestId("inventory-item-name");
-        this.checkout = page.getByTestId("checkout")
+        this.checkoutButton = page.getByTestId("checkout");
     }
 
-    async getProductNames():Promise<string[]>{
-        return await this.productNames.allTextContents();
+    private getProductId(productName: string): string {
+        return productName.replaceAll(" ", "-").toLowerCase();
     }
 
-    async removeProductsFromCart(prodcutNames:string[]):Promise<void>{
-
-        for(const productName of prodcutNames){
-
+    async removeProductsFromCart(productNames: string[]): Promise<void> {
+        for (const productName of productNames) {
             const productId = this.getProductId(productName);
-            const removeButton = this.page.getByTestId(`remove-${productId}`)
-            if(!(await removeButton.isVisible())){
-                throw new Error(`product ${productName} not found`)
-            }
-            await removeButton.click();
-
-
+            await this.page.getByTestId(`remove-${productId}`).click();
         }
     }
-    async clickOnCheckout():Promise<void>{
-        await this.checkout.click();
 
-    }    
-
-
-
+    async clickOnCheckout(): Promise<void> {
+        await this.checkoutButton.click();
+    }
 }

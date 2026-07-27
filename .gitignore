@@ -1,5 +1,4 @@
-
-# Playwright
+# Node & Playwright
 node_modules/
 /test-results/
 /playwright-report/
@@ -7,3 +6,10 @@ node_modules/
 /playwright/.cache/
 /playwright/.auth/
 /artifacts/.auth/
+/artifacts/reports/
+/artifacts/screenshots/
+
+# Environment files & Secrets (Do not commit secrets to Git)
+.env
+.env.*
+!.env.example

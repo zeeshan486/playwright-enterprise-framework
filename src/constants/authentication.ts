@@ -1,9 +1,4 @@
 export const authentication = {
-
-    standardUser:
-        "artifacts/.auth/standard-user.json",
-
-    problemUser:
-        "artifacts/.auth/problem-user.json"
-
+    standardUser: "artifacts/.auth/standard-user.json",
+    errorUser: "artifacts/.auth/error-user.json"
 } as const;
