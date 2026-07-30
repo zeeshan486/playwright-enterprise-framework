@@ -27,7 +27,7 @@ pipeline {
 
         choice(
             name: 'BROWSER',
-            choices: ['chromium', 'firefox', 'webkit'],
+            choices: ['chromium', 'firefox', 'webkit', 'all'],
             description: 'Browser'
         )
 
@@ -140,14 +140,22 @@ pipeline {
 
                 ]) {
 
-                    bat """
-                    set ENV=${params.ENV}
-                    set BASE_URL=${env.BASE_URL}
-                    set HEADLESS=${params.HEADLESS}
-                    set BROWSER=${params.BROWSER}
+                  script {
 
-                    npm test
-                    """
+    def command = "npx playwright test"
+
+    if (params.BROWSER != "all") {
+        command += " --project=${params.BROWSER}"
+    }
+
+    bat """
+    set ENV=${params.ENV}
+    set BASE_URL=${env.BASE_URL}
+    set HEADLESS=${params.HEADLESS}
+
+    ${command}
+    """
+}
 
                 }
 
