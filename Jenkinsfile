@@ -1,17 +1,31 @@
 pipeline {
+
     agent any
 
+    options {
+        timeout(time: 60, unit: 'MINUTES')
+        buildDiscarder(logRotator(
+                numToKeepStr: '20',
+                artifactNumToKeepStr: '10'
+        ))
+        disableConcurrentBuilds()
+        timestamps()
+    }
+
     parameters {
+
         choice(
-            name: 'ENVIRONMENT',
+            name: 'ENV',
             choices: ['qa', 'stage', 'prod'],
-            description: 'Target deployment environment for test execution'
+            description: 'Select Target Environment'
         )
+
         choice(
             name: 'BROWSER',
-            choices: ['chromium', 'firefox', 'webkit', 'all'],
-            description: 'Browser engine for test execution'
+            choices: ['chromium', 'firefox', 'webkit'],
+            description: 'Browser'
         )
+
         booleanParam(
             name: 'HEADLESS',
             defaultValue: true,
@@ -20,111 +34,161 @@ pipeline {
     }
 
     environment {
-        ENV = "${params.ENVIRONMENT}"
-        HEADLESS = "${params.HEADLESS}"
-        CI = 'true'
-    }
 
-    options {
-        timeout(time: 1, unit: 'HOURS')
-        buildDiscarder(logRotator(numToKeepStr: '30'))
-        timestamps()
-        ansiColor('xterm')
+        NODE_ENV = 'test'
     }
 
     stages {
-        stage('Checkout') {
+
+        stage('Checkout Source') {
+
             steps {
-                echo "Checking out repository source code..."
+
                 checkout scm
+
             }
+
         }
 
-        stage('Environment Diagnostic') {
+        stage('Prepare Environment') {
+
             steps {
-                echo "=== Environment Diagnostics ==="
-                echo "Target Environment : ${env.ENV}"
-                echo "Target Browser     : ${params.BROWSER}"
-                echo "Headless Mode      : ${env.HEADLESS}"
-                sh 'node -v'
-                sh 'npm -v'
+
+                script {
+
+                    switch(params.ENV) {
+
+                        case "qa":
+
+                            env.BASE_URL = "https://www.saucedemo.com"
+
+                            env.STANDARD_CREDENTIAL = "qa-standard-user"
+                            env.ERROR_CREDENTIAL = "qa-error-user"
+
+                            break
+
+                        case "stage":
+
+                            env.BASE_URL = "https://stage.company.com"
+
+                            env.STANDARD_CREDENTIAL = "stage-standard-user"
+                            env.ERROR_CREDENTIAL = "stage-error-user"
+
+                            break
+
+                        case "prod":
+
+                            env.BASE_URL = "https://company.com"
+
+                            env.STANDARD_CREDENTIAL = "prod-standard-user"
+                            env.ERROR_CREDENTIAL = "prod-error-user"
+
+                            break
+
+                        default:
+
+                            error("Invalid Environment")
+
+                    }
+
+                }
+
             }
+
         }
 
         stage('Install Dependencies') {
+
             steps {
-                echo "Installing npm dependencies..."
-                sh 'npm ci'
+
+                bat 'npm ci'
+
             }
+
         }
 
         stage('Install Playwright Browsers') {
+
             steps {
-                echo "Installing Playwright browser binaries..."
-                sh 'npx playwright install --with-deps'
+
+                bat 'npx playwright install'
+
             }
+
         }
 
-        stage('TypeScript Validation') {
-            steps {
-                echo "Running type check..."
-                sh 'npm run typecheck'
-            }
-        }
+        stage('Run Playwright Tests') {
 
-        stage('Execute Playwright Tests') {
             steps {
-                script {
-                    echo "Executing Playwright suite on environment: ${params.ENVIRONMENT} against browser: ${params.BROWSER}..."
-                    
-                    switch(params.BROWSER) {
-                        case 'chromium':
-                            sh 'npm run test:chromium'
-                            break
-                        case 'firefox':
-                            sh 'npm run test:firefox'
-                            break
-                        case 'webkit':
-                            sh 'npm run test:webkit'
-                            break
-                        case 'all':
-                            sh 'npm run test:all'
-                            break
-                        default:
-                            sh 'npm run test:chromium'
-                    }
+
+                withCredentials([
+
+                    usernamePassword(
+                            credentialsId: env.STANDARD_CREDENTIAL,
+                            usernameVariable: 'TEST_USERNAME',
+                            passwordVariable: 'TEST_PASSWORD'
+                    ),
+
+                    usernamePassword(
+                            credentialsId: env.ERROR_CREDENTIAL,
+                            usernameVariable: 'ERROR_USER_USERNAME',
+                            passwordVariable: 'ERROR_USER_PASSWORD'
+                    )
+
+                ]) {
+
+                    bat """
+                    set ENV=${params.ENV}
+                    set BASE_URL=%BASE_URL%
+                    set HEADLESS=${params.HEADLESS}
+                    set BROWSER=${params.BROWSER}
+
+                    npm test
+                    """
+
                 }
+
             }
+
         }
+
     }
 
     post {
-        always {
-            echo "Archiving test artifacts and reports..."
-            
-            // Archive HTML reports and failure traces/screenshots
-            archiveArtifacts artifacts: 'artifacts/reports/**/*, test-results/**/*', allowEmptyArchive: true
 
-            // Publish HTML report if Jenkins HTML Publisher plugin is installed
-            script {
-                if (pluginManager.hasPlugin('htmlpublisher')) {
-                    publishHTML([
-                        allowMissing: true,
-                        alwaysLinkToLastBuild: true,
-                        keepAll: true,
-                        reportDir: 'artifacts/reports',
-                        reportFiles: 'index.html',
-                        reportName: 'Playwright E2E Test Report',
-                        reportTitles: 'Playwright Test Execution Summary'
-                    ])
-                }
-            }
+        always {
+
+            archiveArtifacts artifacts: 'playwright-report/**', allowEmptyArchive: true
+
+            publishHTML(target: [
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'playwright-report',
+                    reportFiles: 'index.html',
+                    reportName: 'Playwright Report'
+            ])
+
         }
+
         success {
-            echo "Pipeline completed successfully! All Playwright E2E tests passed."
+
+            echo "Playwright Tests Passed"
+
         }
+
         failure {
-            echo "Pipeline failed. Inspect archived Playwright HTML reports and failure traces."
+
+            echo "Playwright Tests Failed"
+
         }
+
+        cleanup {
+
+            cleanWs()
+
+        }
+
     }
+
 }
