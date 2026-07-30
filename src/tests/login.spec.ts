@@ -4,16 +4,17 @@ import { users } from "../test-data/users";
 // Reset storageState for authentication tests so user starts logged out
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test("TC-01 Successful Login", async ({ loginPage, inventoryPage }) => {
+test("TC-01 Successful Login", async ({ page,loginPage, inventoryPage }) => {
     await loginPage.navigate("/");
     await loginPage.login(users.standardUser.username, users.standardUser.password);
-    await expect(inventoryPage.productsTitle).toHaveText("Products");
+    await expect(inventoryPage.productsTitle).toHaveText("Products"); 
 });
 
 test("TC-02 Locked User Login", async ({ loginPage }) => {
     await loginPage.navigate("/");
     await loginPage.login(users.lockedOutUser.username, users.lockedOutUser.password);
     await expect(loginPage.errorMessage).toHaveText("Epic sadface: Sorry, this user has been locked out.");
+
 });
 
 test("TC-03 Invalid Login", async ({ loginPage }) => {
